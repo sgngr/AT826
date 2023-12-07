@@ -14,7 +14,7 @@ print ("Applent AT826 found!")
 
 at826.claim()
 
-#at826.send_command("Rst")  # USB enumaretion changes after a hot reset
+#at826.send_command("Rst")  # USB enumeration changes after a hot reset
 #time.sleep(4) # Wait the device to restart   
 #at826.find()
 #at826.claim()
