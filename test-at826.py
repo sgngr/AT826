@@ -4,7 +4,6 @@ import time
 # Ensure the 'libusb' library is found!
 print("libusb path:\n\t{}\n".format(libusb_package.get_library_path())) 
 
-
 at826=AT826(0x0825,0x0826)
 
 at826.find()
