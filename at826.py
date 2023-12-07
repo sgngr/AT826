@@ -25,37 +25,32 @@ class Command():
         self.signature=0x88805550
         self.checksum=0
         self.commandPack=bytearray(64)
+    
     def set_command_pack(self,command,parameter=None):
-
         if len(command) > 24 :
             self.command=command[:24].upper()
         else :
             self.command=command.upper()
-        
         if parameter :
             if len(parameter) > 28 :
                 self.parameter=parameter[:28].upper()
             else :
                 self.parameter=parameter.upper()
-            
+        # Command pack
         self.commandPack = [0x0 for i in range(len(self.commandPack))]
         pack=bytearray(struct.pack('<I',self.size))
         for i in range(len(pack)):
             self.commandPack[i]=pack[i]
-        
         pack=bytearray(self.command,encoding='utf-8')
         for i in range(len(pack)):
             self.commandPack[4+i]=pack[i]
-        
         if self.parameter :
             pack=bytearray(self.parameter,encoding='utf-8')
             for i in range(len(pack)):
                 self.commandPack[28+i]=pack[i]
-                
         pack=bytearray(struct.pack('<I',self.signature))
         for i in range(len(pack)):
             self.commandPack[56+i]=pack[i]
-                
         self.checksum=self.calc_checksum(self.commandPack,self.size)
         pack=bytearray(struct.pack('<I',self.checksum))
         for i in range(len(pack)):
@@ -66,6 +61,7 @@ class Command():
         for i in range(length):
             checksum+=buf[i]
         return checksum 
+    
     def print(self):
         print("")
         print(" Size:         0x{s:08x}".format(s=self.size))
@@ -86,6 +82,7 @@ class AT826():
         self.dev=None
         self.command=Command()
         self.response=None
+    
     def find(self):
         if platform.system() == 'Linux':
             self.dev = usb.core.find(idVendor=self.VID, idProduct=self.PID)
@@ -94,12 +91,14 @@ class AT826():
             self.dev = usb.core.find(backend=backend,idVendor=self.VID, idProduct=self.PID)
         else :
             self.dev = usb.core.find(idVendor=self.VID, idProduct=self.PID)
+    
     def claim(self):
         interface=0
         if platform.system() == 'Linux':
             if self.dev.is_kernel_driver_active(interface) is True:
                 self.dev.detach_kernel_driver(interface)
         usb.util.claim_interface(self.dev, interface)
+    
     def release(self):
         interface=0
         usb.util.release_interface(self.dev, interface)
